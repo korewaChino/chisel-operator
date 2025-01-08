@@ -26,13 +26,15 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "chisel-operator.serviceAccountName" . }}
       containers:
         - name: {{ .Chart.Name }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            - name: "REQUIRE_OPERATOR_CLASS"
+              value: "{{.Values.global.requireOperatorClass}}"
 
       {{- with .Values.nodeSelector }}
       nodeSelector:
@@ -47,3 +49,4 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 
+      
